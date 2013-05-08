@@ -1,0 +1,47 @@
+---
+# version
+date: 2 Junly 2013
+author: Graham THE Ollis
+company: dc.pm.org
+location: dc.pm.org
+title: RESTful APIs In Perl With Clustericious
+
+title_page:
+  - (and Mojolicious)
+  - Graham THE Ollis
+  - 2 July 2013
+
+slides:
+  - - Overview
+    - Web Services
+    - REST
+    - Platforms
+    - Clustericious
+  - - Web Services
+    - SOAP
+      - SOAP::Lite
+    - XML-RPC
+      - XML::RPC
+      - RPC::XML
+    - REST
+      - Catalyst
+      - Mojolicious
+      - Clustericious
+      - Dancer
+  - - Mojolicious::Lite
+    - text: A simple example
+    - perl: |
+              use Mojolicious:Lite
+              
+              get '/:foo' => sub {
+                my $self = shift;
+                my $foo  = $self->param('foo');
+                $self->render(text => "Hello from $foo.");
+              };
+              
+              app->start;
+
+  - - Mojolicious (full app)
+    - Traffic cone for when the site goes down.
+  - - Mojolicious (full app)
+    - Starter script for App::TrafficCone.

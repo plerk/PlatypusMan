@@ -1,0 +1,87 @@
+#!/usr/bin/perl
+
+use strict;
+use warnings;
+use v5.10;
+use Getopt::Long qw( GetOptions );
+use Pod::Usage qw( pod2usage );
+use Path::Class qw( file dir foreign_file );
+use Template;
+use YAML::XS qw( LoadFile );
+use PlatypusMan;
+use Archive::Zip;
+
+# PODNAME pmx
+# ABSTRACT: s5 presentation generator
+# VERSION
+
+=head1 SYNOPSIS
+
+ % pmx foo.pmx
+
+=head1 OPTIONS
+
+=head2 --help | -h
+
+Display help.
+
+=head2 --version
+
+Display version
+
+=cut
+
+my $theme = 's5-blank';
+
+GetOptions(
+  'help|h'  => sub { pod2usage({ -verbose => 2}) },
+  'version' => sub {
+    say 'Platypus Man version ', ($PlatypusMan::VERSION //'dev');
+    exit 1;
+  },
+) || pod2usage(1);
+
+pod2usage(1) unless defined $ARGV[0];
+
+my $pmx_filename = file(shift @ARGV);
+
+unless($pmx_filename->basename =~ /\.pmx$/)
+{
+  say STDERR "pmx file does not have a .pmx extension";
+  exit 2;
+}
+
+my $pmx = LoadFile($pmx_filename->stringify);
+$pmx->{version} = $PlatypusMan::VERSION // 'dev';
+
+my $tt2 = Template->new({
+  INCLUDE_PATH => [
+    PlatypusMan->share_dir->subdir('s5')->stringify,
+    PlatypusMan->share_dir->subdir('themes')->stringify,
+  ],
+});
+
+my $html = '';
+$tt2->process("$theme.tt2", $pmx, \$html) || die $tt2->error;
+
+my $dir = $pmx_filename->basename;
+$dir =~ s/\.pmx//;
+$dir = $pmx_filename->dir->subdir($dir)->absolute;
+$dir->mkpath(0, 0755);
+$dir->file('index.html')->spew($html);
+
+my $zip = Archive::Zip->new;
+$zip->read(PlatypusMan->share_dir->file('s5', 's5-blank.zip')->stringify);
+
+foreach my $member ($zip->members)
+{
+  next if $member->isDirectory;
+  my $name = foreign_file('Unix', $member->fileName);
+  next if $name->basename =~ /^\./;
+  next if $name->basename =~ /\.html$/i;
+  $name = $member->fileName;
+  next unless $name =~ s{^.*/ui/}{ui/};
+  $name = $dir->file($name);
+  $name->dir->mkpath(0,0755);
+  $member->extractToFileHandle($name->openw);
+}

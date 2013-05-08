@@ -31,6 +31,8 @@ sub share_dir
         ->subdir('share');
     }
   }
+  
+  $path;
 }
 
 1;
