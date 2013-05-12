@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-<title>S5: An Introduction</title>
+<title>[% title %]</title>
 <!-- metadata -->
 <meta name="generator" content="PlatypusMan" />
 <meta name="version" content="S5 1.1" />
@@ -21,6 +21,19 @@
 <link rel="stylesheet" href="ui/default/opera.css" type="text/css" media="projection" id="operaFix" />
 <!-- S5 JS -->
 <script src="ui/default/slides.js" type="text/javascript"></script>
+<!-- sh -->
+<script src="sh/sh_main.js" type="text/javascript"></script>
+<script src="sh/sh_perl.js" type="text/javascript"></script>
+<link rel="stylesheet" href="sh/sh_[% sh_theme %].css" />
+<script type="text/javascript">
+  (function() {
+    var save = window.onload;
+    window.onload = function() {
+      save();
+      sh_highlightDocument();
+    };
+  })();
+</script>
 </head>
 <body>
 

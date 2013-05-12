@@ -21,6 +21,14 @@ use Archive::Zip;
 
 =head1 OPTIONS
 
+=head2 --theme | -t I<theme name>
+
+The s5 theme to use
+
+=head2 --sh_theme | -s I<theme name>
+
+The sh theme to use
+
 =head2 --help | -h
 
 Display help.
@@ -32,11 +40,13 @@ Display version
 =cut
 
 my $theme;
+my $sh_theme = 'acid';
 
 GetOptions(
-  'theme|t=s' => \$theme,
-  'help|h'    => sub { pod2usage({ -verbose => 2}) },
-  'version'   => sub {
+  'theme|t=s'    => \$theme,
+  'sh_theme|s=s' => \$sh_theme,
+  'help|h'       => sub { pod2usage({ -verbose => 2}) },
+  'version'      => sub {
     say 'Platypus Man version ', ($PlatypusMan::VERSION //'dev');
     exit 1;
   },
@@ -72,9 +82,9 @@ sub recurse
     {
       $pmx->{content} .= "<p>" . $first->{p} . "</p>\n";
     }
-    elsif($first->{perl})
+    elsif($first->{sh_perl})
     {
-      $pmx->{content} .= "<pre>" . $first->{perl} . "</pre>\n";
+      $pmx->{content} .= qq{<pre class="sh_perl">} . $first->{sh_perl} . qq{</pre>\n};
     }
     else
     {
@@ -114,13 +124,22 @@ foreach my $slide (@{ $pmx->{slides} })
   $pmx->{content} .= qq{</div>};
 }
 
-my $html = '';
-$tt2->process(do { $theme // 's5-blank' } . ".tt2", $pmx, \$html) || die $tt2->error;
-
 my $dir = $pmx_filename->basename;
 $dir =~ s/\.pmx//;
 $dir = $pmx_filename->dir->subdir($dir)->absolute;
 $dir->mkpath(0, 0755);
+
+do {
+  my $sh_dir = $dir->subdir('sh');
+  $sh_dir->mkpath(0,0755);
+  $sh_dir->file("sh_$sh_theme.css")->spew(PlatypusMan->share_dir->file('sh', 'css', "sh_$sh_theme.min.css")->slurp);
+  $sh_dir->file("sh_main.js")->spew(PlatypusMan->share_dir->file('sh', 'sh_main.min.js')->slurp);
+  $sh_dir->file("sh_perl.js")->spew(PlatypusMan->share_dir->file('sh', 'lang', 'sh_perl.min.js')->slurp);
+  $pmx->{sh_theme} = $sh_theme;
+};
+
+my $html = '';
+$tt2->process(do { $theme // 's5-blank' } . ".tt2", $pmx, \$html) || die $tt2->error;
 $dir->file('index.html')->spew($html);
 
 my $zip = Archive::Zip->new;

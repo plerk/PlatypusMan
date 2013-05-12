@@ -30,82 +30,82 @@ slides:
       - Dancer
   - - Mojolicious::Lite
     - p: A simple example
-    - perl: |
-              #!/usr/bin/perl
-              use Mojolicious:Lite
-              
-              get '/:foo' => sub {
-                my $self = shift;
-                my $foo  = $self->param('foo');
-                $self->render(text => "Hello from $foo.");
-              };
-              
-              app->start;
+    - sh_perl: |
+                 #!/usr/bin/perl
+                 use Mojolicious:Lite
+                 
+                 get '/:foo' => sub {
+                   my $self = shift;
+                   my $foo  = $self->param('foo');
+                   $self->render(text => "Hello from $foo.");
+                 };
+                 
+                 app->start;
   - - Mojolicious::Lite
     - p: With a default argument
-    - perl: |
-              #!/usr/bin/perl
-              use Mojolicious:Lite
+    - sh_perl: |
+                 #!/usr/bin/perl
+                 use Mojolicious:Lite
+                 
+                 get '/:foo' => { foo => 'mojolicious' } => sub {
+                   my $self = shift;
+                   my $foo  = $self->param('foo');
+                   $self->render(text => "Hello from $foo.");
+                 };
               
-              get '/:foo' => { foo => 'mojolicious' } => sub {
-                my $self = shift;
-                my $foo  = $self->param('foo');
-                $self->render(text => "Hello from $foo.");
-              };
-              
-              app->start;
+                 app->start;
   - - Mojolicious::Lite
     - p: Same thing
-    - perl: |
-              #!/usr/bin/perl
-              use Mojolicious:Lite
-              
-              get '/:foo' => sub {
-                my $self = shift;
-                my $foo  = $self->param('foo');
-                $self->render(text => "Hello from $foo.");
-              };
-              
-              app->start;
+    - sh_perl: |
+                 #!/usr/bin/perl
+                 use Mojolicious:Lite
+                 
+                 get '/:foo' => sub {
+                   my $self = shift;
+                   my $foo  = $self->param('foo');
+                   $self->render(text => "Hello from $foo.");
+                 };
+                 
+                 app->start;
   - - Mojolicious (full app)
     - Traffic cone for when the site goes down.
-    - perl: |
-              package App::TrafficCone;
-              
-              use Mojo::Base qw( Mojolicious );
-              
-              sub startup {
-                my($self, $config) = @_;
-                $self->routes->any('/*x' => { x => 'y' } => sub {
-                  my $c = shift;
-                  $c->render( 
-                    text   => 'Down for maintenance', 
-                    status => 503,
-                  );
-                }
-              }
-              
-              1;
+    - sh_perl: |
+                 package App::TrafficCone;
+                 
+                 use Mojo::Base qw( Mojolicious );
+                 
+                 sub startup {
+                   my($self, $config) = @_;
+                   $self->routes->any('/*x' => { x => 'y' } => sub {
+                     my $c = shift;
+                     $c->render( 
+                       text   => 'Down for maintenance', 
+                       status => 503,
+                     );
+                   }
+                 }
+                 
+                 1;
   - - Mojolicious (full app)
     - Starter script for App::TrafficCone.
-    - perl: |
-              #!/usr/bin/perl
-              use Mojolicious::Commands;
-              Mojolicious::Commands->start_app('App::TrafficCone');
+    - sh_perl: |
+                 #!/usr/bin/perl
+                 use Mojolicious::Commands;
+                 Mojolicious::Commands->start_app('App::TrafficCone');
   - - Mojolicious::Lite (revisited)
     - Same script as a mojo lite app
-    - perl: |
-              #!/usr/bin/perl
-              use Mojolicious::Lite;
-              any '/*x' => { x => 'y' } => sub {
-                my $c = shift;
-                $c->render(
-                  text   => 'Down for maintenance',
-                  status => 503,
-                );
-              }
-              
-              app->start;
+    - sh_perl: |
+                 #!/usr/bin/perl
+                 use Mojolicious::Lite;
+                 any '/*x' => { x => 'y' } => sub {
+                   my $c = shift;
+                   $c->render(
+                     text   => 'Down for maintenance',
+                     status => 503,
+                   );
+                 }
+                 
+                 app->start;
   - - Mojolicious full vs. lite
     - dichotomy
     - mental context-switch
