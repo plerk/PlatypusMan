@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>[slide show title here]</title>
+
+	<!-- metadata -->
+
+	<!-- "generator" can be the program used to generate this, or (by default) an indication that it's an S5 slide show. -->
+	<meta name="generator" content="PlatypusMan" />
+
+	<!-- "version" identifies the particular version of S5 -->
+	<meta name="version" content="S5 1.1" />
+
+	<!-- "presdate" identifies the date of the presentation.  Example: "20061231" is December 31 2006 -->
+	<meta name="presdate" content="[% date %]" />
+
+	<meta name="author" content="[% author %]" />
+	<meta name="company" content="[% company %]" />
+
+	<!-- configuration parameters -->
+		<!-- Set defaultView to "outline" if you want the default view to be as a plain web page; otherwise, use "slideshow." -->
+		<meta name="defaultView" content="slideshow" />
+
+		<!-- Set controlVis to "hidden" if you want the controls hidden.  Otherwise, use "visible."  The default is "visible." -->
+		<meta name="controlVis" content="visible" />
+
+	<!-- style sheet links -->
+	<!-- these control the visual appearance of the slide show. -->
+	<link rel="stylesheet" href="ui/blue/slides.css" type="text/css" media="projection" id="slideProj" />
+	<link rel="stylesheet" href="ui/default/outline.css" type="text/css" media="screen" id="outlineStyle" />
+	<link rel="stylesheet" href="ui/default/print.css" type="text/css" media="print" id="slidePrint" />
+	<link rel="stylesheet" href="ui/default/opera.css" type="text/css" media="projection" id="operaFix" />
+
+	<!-- S5 JS -->
+	<!-- this script handles all the interactivity, e.g. making the slides advance -->
+	<script src="ui/default/slides.js" type="text/javascript"></script>
+</head>
+<body>
+
+<div class="layout">
+<div id="controls"><!-- DO NOT EDIT --></div>
+<div id="currentSlide"><!-- DO NOT EDIT --></div>
+<div id="header"></div>
+<div id="footer">
+<h1>[% location %] / [% date %]</h1>
+<h2>[% title %]</h2>
+</div>
+
+</div>
+
+
+<div class="presentation">
+
+<div class="slide">
+<h1>[% title %]</h1>
+[% FOR line IN title_page %]
+<h3>[% line %]</h3>
+[% END %]
+</div>
+
+[% content %]
+
+</div>
+</body>
+</html>

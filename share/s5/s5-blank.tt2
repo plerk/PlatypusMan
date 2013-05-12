@@ -7,7 +7,7 @@
 <title>S5: An Introduction</title>
 <!-- metadata -->
 <meta name="generator" content="PlatypusMan" />
-<meta name="version" content="[% version %]" />
+<meta name="version" content="S5 1.1" />
 <meta name="presdate" content="[% date %]" />
 <meta name="author" content="[% author %]" />
 <meta name="company" content="[% company %]" />
@@ -31,7 +31,6 @@
 <div id="footer">
 <h1>[% location %] / [% date %]</h1>
 <h2>[% title %]</h2>
-[% IF company %]<h3>[% company %]</h3>[% END %]
 </div>
 
 </div>

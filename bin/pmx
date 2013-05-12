@@ -7,7 +7,7 @@ use Getopt::Long qw( GetOptions );
 use Pod::Usage qw( pod2usage );
 use Path::Class qw( file dir foreign_file );
 use Template;
-use YAML::XS qw( LoadFile );
+use YAML::XS qw( LoadFile Dump );
 use PlatypusMan;
 use Archive::Zip;
 
@@ -31,11 +31,12 @@ Display version
 
 =cut
 
-my $theme = 's5-blank';
+my $theme;
 
 GetOptions(
-  'help|h'  => sub { pod2usage({ -verbose => 2}) },
-  'version' => sub {
+  'theme|t=s' => \$theme,
+  'help|h'    => sub { pod2usage({ -verbose => 2}) },
+  'version'   => sub {
     say 'Platypus Man version ', ($PlatypusMan::VERSION //'dev');
     exit 1;
   },
@@ -61,8 +62,60 @@ my $tt2 = Template->new({
   ],
 });
 
+sub recurse
+{
+  my($first, @rest) = @_;
+  return unless defined $first;
+  if(ref $first)
+  {
+    if($first->{p})
+    {
+      $pmx->{content} .= "<p>" . $first->{p} . "</p>\n";
+    }
+    elsif($first->{perl})
+    {
+      $pmx->{content} .= "<pre>" . $first->{perl} . "</pre>\n";
+    }
+    else
+    {
+      say STDERR Dump($first);
+      die 'bad element';
+    }
+    recurse(@rest);
+  }
+  else
+  {
+    $pmx->{content} .= qq{<ul><li>$first</li>\n};
+    while(defined $rest[0] && (! ref $rest[0]) || (ref $rest[0] eq 'ARRAY'))
+    {
+      my $item = shift @rest;
+      if(ref($item) eq 'ARRAY')
+      {
+        recurse(@{ $item });
+      }
+      else
+      {
+        $pmx->{content} .= qq{<li>$item</li>\n};
+      }
+    }
+    $pmx->{content} .= qq{</ul>\n};
+    recurse(@rest);
+  }
+}
+
+$pmx->{content} = '';
+foreach my $slide (@{ $pmx->{slides} })
+{
+  my($title, @rest) = @{ $slide };
+  $pmx->{content} .= qq{<div class="slide">\n<h1>$title</h1>\n};
+  
+  recurse(@rest);
+  
+  $pmx->{content} .= qq{</div>};
+}
+
 my $html = '';
-$tt2->process("$theme.tt2", $pmx, \$html) || die $tt2->error;
+$tt2->process(do { $theme // 's5-blank' } . ".tt2", $pmx, \$html) || die $tt2->error;
 
 my $dir = $pmx_filename->basename;
 $dir =~ s/\.pmx//;
@@ -71,7 +124,7 @@ $dir->mkpath(0, 0755);
 $dir->file('index.html')->spew($html);
 
 my $zip = Archive::Zip->new;
-$zip->read(PlatypusMan->share_dir->file('s5', 's5-blank.zip')->stringify);
+$zip->read(PlatypusMan->share_dir->file($theme ? ('themes', "$theme.zip") : ('s5', 's5-blank.zip'))->stringify);
 
 foreach my $member ($zip->members)
 {
