@@ -22,7 +22,7 @@
 		<meta name="defaultView" content="slideshow" />
 
 		<!-- Set controlVis to "hidden" if you want the controls hidden.  Otherwise, use "visible."  The default is "visible." -->
-		<meta name="controlVis" content="visible" />
+		<meta name="controlVis" content="hidden" />
 
 	<!-- style sheet links -->
 	<!-- these control the visual appearance of the slide show. -->

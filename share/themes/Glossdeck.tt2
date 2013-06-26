@@ -26,14 +26,14 @@
 
 	<!-- style sheet links -->
 	<!-- these control the visual appearance of the slide show. -->
-	<link rel="stylesheet" href="ui/pixel/slides.css" type="text/css" media="projection" id="slideProj" />
-	<link rel="stylesheet" href="ui/default/outline.css" type="text/css" media="screen" id="outlineStyle" />
-	<link rel="stylesheet" href="ui/default/print.css" type="text/css" media="print" id="slidePrint" />
-	<link rel="stylesheet" href="ui/default/opera.css" type="text/css" media="projection" id="operaFix" />
+	<link rel="stylesheet" href="ui/glossdeck/slides.css" type="text/css" media="projection" id="slideProj" />
+	<link rel="stylesheet" href="ui/glossdeck/outline.css" type="text/css" media="screen" id="outlineStyle" />
+	<link rel="stylesheet" href="ui/glossdeck/print.css" type="text/css" media="print" id="slidePrint" />
+	<link rel="stylesheet" href="ui/glossdeck/opera.css" type="text/css" media="projection" id="operaFix" />
 
 	<!-- S5 JS -->
 	<!-- this script handles all the interactivity, e.g. making the slides advance -->
-	<script src="ui/default/slides.js" type="text/javascript"></script>
+	<script src="ui/glossdeck/slides.js" type="text/javascript"></script>
 <!-- sh -->
 <script src="sh/sh_main.js" type="text/javascript"></script>
 <script src="sh/sh_perl.js" type="text/javascript"></script>
@@ -74,5 +74,6 @@
 [% content %]
 
 </div>
+<img id="background" src="ui/glossdeck/gradient-bg.jpg" alt="" />
 </body>
 </html>

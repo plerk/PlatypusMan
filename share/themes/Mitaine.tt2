@@ -26,7 +26,7 @@
 
 	<!-- style sheet links -->
 	<!-- these control the visual appearance of the slide show. -->
-	<link rel="stylesheet" href="ui/pixel/slides.css" type="text/css" media="projection" id="slideProj" />
+	<link rel="stylesheet" href="ui/mitaine/slides.css" type="text/css" media="projection" id="slideProj" />
 	<link rel="stylesheet" href="ui/default/outline.css" type="text/css" media="screen" id="outlineStyle" />
 	<link rel="stylesheet" href="ui/default/print.css" type="text/css" media="print" id="slidePrint" />
 	<link rel="stylesheet" href="ui/default/opera.css" type="text/css" media="projection" id="operaFix" />

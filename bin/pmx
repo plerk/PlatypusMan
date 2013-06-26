@@ -10,6 +10,7 @@ use Template;
 use YAML::XS qw( LoadFile Dump );
 use PlatypusMan;
 use Archive::Zip;
+use File::Temp qw( tempdir );
 
 # PODNAME pmx
 # ABSTRACT: s5 presentation generator
@@ -29,6 +30,10 @@ The s5 theme to use
 
 The sh theme to use
 
+=head2 --test
+
+Create in temp directory and open in web browser
+
 =head2 --help | -h
 
 Display help.
@@ -41,10 +46,12 @@ Display version
 
 my $theme;
 my $sh_theme = 'acid';
+my $test     = 0;
 
 GetOptions(
   'theme|t=s'    => \$theme,
   'sh_theme|s=s' => \$sh_theme,
+  'test'         => \$test,
   'help|h'       => sub { pod2usage({ -verbose => 2}) },
   'version'      => sub {
     say 'Platypus Man version ', ($PlatypusMan::VERSION //'dev');
@@ -124,10 +131,19 @@ foreach my $slide (@{ $pmx->{slides} })
   $pmx->{content} .= qq{</div>};
 }
 
-my $dir = $pmx_filename->basename;
-$dir =~ s/\.pmx//;
-$dir = $pmx_filename->dir->subdir($dir)->absolute;
-$dir->mkpath(0, 0755);
+my $dir;
+
+if($test)
+{
+  $dir = dir( tempdir( CLEANUP => 0 ) );
+}
+else
+{
+  $dir = $pmx_filename->basename;
+  $dir =~ s/\.pmx//;
+  $dir = $pmx_filename->dir->subdir($dir)->absolute;
+  $dir->mkpath(0, 0755);
+}
 
 do {
   my $sh_dir = $dir->subdir('sh');
@@ -156,4 +172,20 @@ foreach my $member ($zip->members)
   $name = $dir->file($name);
   $name->dir->mkpath(0,0755);
   $member->extractToFileHandle($name->openw);
+}
+
+if($test)
+{
+  if($^O eq 'MSWin32')
+  {
+    system 'start', $dir->file('index.html');
+  }
+  elsif($^O eq 'cygwin')
+  {
+    system 'cygstart', $dir->file('index.html');
+  }
+  else
+  {
+    system 'gnome-open', $dir->file('index.html');
+  }
 }
