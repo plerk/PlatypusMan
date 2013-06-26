@@ -51,7 +51,7 @@
 <body>
 
 <div class="layout">
-<div id="controls"><!-- DO NOT EDIT --></div>
+<div id="controls" style="display: none;" ><!-- DO NOT EDIT --></div>
 <div id="currentSlide"><!-- DO NOT EDIT --></div>
 <div id="header"></div>
 <div id="footer">
