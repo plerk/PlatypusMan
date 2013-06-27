@@ -8,6 +8,14 @@ PlatypusMan - Template based S5 Generation
 
 version 0.01
 
+=head1 BUNDLED FILES
+
+=head2 s5
+
+=head2 sh
+
+=head2 themes
+
 =head1 AUTHOR
 
 Graham Ollis <perl@wdlabs.com>
