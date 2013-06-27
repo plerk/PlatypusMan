@@ -11,6 +11,7 @@ use YAML::XS qw( LoadFile Dump );
 use PlatypusMan;
 use Archive::Zip;
 use File::Temp qw( tempdir );
+use HTML::Entities qw( encode_entities );
 
 # PODNAME pmx
 # ABSTRACT: s5 presentation generator
@@ -97,9 +98,13 @@ sub recurse
     {
       $pmx->{content} .= "<p>" . $first->{p} . "</p>\n";
     }
+    elsif($first->{sh_xml})
+    {
+      $pmx->{content} .= qq{<pre>} . encode_entities($first->{sh_xml}) . qq{</pre>};
+    }
     elsif($first->{sh_perl})
     {
-      $pmx->{content} .= qq{<pre class="sh_perl">} . $first->{sh_perl} . qq{</pre>\n};
+      $pmx->{content} .= qq{<pre class="sh_perl">} . encode_entities($first->{sh_perl}) . qq{</pre>\n};
     }
     elsif($first->{html})
     {
