@@ -34,6 +34,10 @@ The sh theme to use
 
 Create in temp directory and open in web browser
 
+=head2 --dir | -d I<dirname>
+
+Location to send output presentations too.
+
 =head2 --help | -h
 
 Display help.
@@ -45,13 +49,15 @@ Display version
 =cut
 
 my $theme;
-my $sh_theme = 'acid';
+my $sh_theme;
 my $test     = 0;
+my $dir;
 
 GetOptions(
   'theme|t=s'    => \$theme,
   'sh_theme|s=s' => \$sh_theme,
   'test'         => \$test,
+  'dir|d'        => \$dir,
   'help|h'       => sub { pod2usage({ -verbose => 2}) },
   'version'      => sub {
     say 'Platypus Man version ', ($PlatypusMan::VERSION //'dev');
@@ -71,6 +77,8 @@ unless($pmx_filename->basename =~ /\.pmx$/)
 
 my $pmx = LoadFile($pmx_filename->stringify);
 $pmx->{version} = $PlatypusMan::VERSION // 'dev';
+$theme //= $pmx->{theme};
+$sh_theme //= $pmx->{sh_theme} // 'acid';
 
 my $tt2 = Template->new({
   INCLUDE_PATH => [
@@ -92,6 +100,10 @@ sub recurse
     elsif($first->{sh_perl})
     {
       $pmx->{content} .= qq{<pre class="sh_perl">} . $first->{sh_perl} . qq{</pre>\n};
+    }
+    elsif($first->{html})
+    {
+      $pmx->{content} .= $first->{html};
     }
     else
     {
@@ -131,19 +143,29 @@ foreach my $slide (@{ $pmx->{slides} })
   $pmx->{content} .= qq{</div>};
 }
 
-my $dir;
+my $basename = $pmx_filename->basename;
+$basename =~ s/\.pmx//;
 
-if($test)
+if(defined $dir)
+{
+  $dir = dir( $dir )->subdir($basename);
+}
+elsif($test)
 {
   $dir = dir( tempdir( CLEANUP => 0 ) );
+}
+elsif(defined $ENV{PLATYPUS_MAN_OUTPUT})
+{
+  $dir = dir( $ENV{PLATYPUS_MAN_OUTPUT} )->subdir($basename);
 }
 else
 {
   $dir = $pmx_filename->basename;
   $dir =~ s/\.pmx//;
   $dir = $pmx_filename->dir->subdir($dir)->absolute;
-  $dir->mkpath(0, 0755);
 }
+
+$dir->mkpath(0, 0755);
 
 do {
   my $sh_dir = $dir->subdir('sh');
