@@ -86,10 +86,12 @@ do {
   $pmx->{html_header} = qq{
 <style type="text/css">
 $css
+  pre { overflow: auto; }
 </style>
 <!-- sh -->
 <script src="sh/sh_main.js" type="text/javascript"></script>
 <script src="sh/sh_perl.js" type="text/javascript"></script>
+<script src="sh/sh_xml.js" type="text/javascript"></script>
 <link rel="stylesheet" href="sh/sh_$sh_theme.css" />
 <script type="text/javascript">
   (function() {
@@ -111,27 +113,63 @@ my $tt2 = Template->new({
   ],
 });
 
+my $basename = $pmx_filename->basename;
+$basename =~ s/\.pmx//;
+
+sub content
+{
+  my $h = shift;
+  if(ref $h)
+  {
+    if($h->{file})
+    {
+      return scalar $pmx_filename->parent->file($basename, $h->{file})->slurp;
+    }
+    else
+    {
+      return "[source not found]";
+    }
+  }
+  else
+  {
+    return $h;
+  }
+}
+
 sub recurse
 {
   my($first, @rest) = @_;
   return unless defined $first;
   if(ref $first)
   {
+    my @styles;
+    
+    if($first->{height})
+    {
+      push @styles, "height: " . $first->{height};
+    }
+    
+    my $style = @styles > 0 ? q{style="} . join(';', @styles) . q{"} : '';
+    
     if($first->{p})
     {
-      $pmx->{content} .= "<p>" . $first->{p} . "</p>\n";
+      $pmx->{content} .= "<p $style>" . content($first->{p}) . "</p>\n";
+    }
+    elsif($first->{text})
+    {
+      $pmx->{content} .= qq{<pre>} . encode_entities(content($first->{text})) . qq{</pre>};
     }
     elsif($first->{sh_xml})
     {
-      $pmx->{content} .= qq{<pre>} . encode_entities($first->{sh_xml}) . qq{</pre>};
+      $pmx->{content} .= qq{<pre class="sh_xml" $style>} . encode_entities(content($first->{sh_xml})) . qq{</pre>};
     }
     elsif($first->{sh_perl})
     {
-      $pmx->{content} .= qq{<pre class="sh_perl">} . encode_entities($first->{sh_perl}) . qq{</pre>\n};
+      $pmx->{content} .= qq{<pre class="sh_perl" $style>} . encode_entities(content($first->{sh_perl})) . qq{</pre>\n};
     }
     elsif($first->{html})
     {
-      $pmx->{content} .= $first->{html};
+      $pmx->{content} .= content($first->{html});
     }
     else
     {
@@ -171,9 +209,6 @@ foreach my $slide (@{ $pmx->{slides} })
   $pmx->{content} .= qq{</div>};
 }
 
-my $basename = $pmx_filename->basename;
-$basename =~ s/\.pmx//;
-
 if(defined $dir)
 {
   $dir = dir( $dir )->subdir($basename);
@@ -200,7 +235,10 @@ do {
   $sh_dir->mkpath(0,0755);
   $sh_dir->file("sh_$sh_theme.css")->spew(PlatypusMan->share_dir->file('sh', 'css', "sh_$sh_theme.min.css")->slurp);
   $sh_dir->file("sh_main.js")->spew(PlatypusMan->share_dir->file('sh', 'sh_main.min.js')->slurp);
-  $sh_dir->file("sh_perl.js")->spew(PlatypusMan->share_dir->file('sh', 'lang', 'sh_perl.min.js')->slurp);
+  foreach my $lang (qw( xml perl ))
+  {
+    $sh_dir->file("sh_$lang.js")->spew(PlatypusMan->share_dir->file('sh', 'lang', "sh_$lang.min.js")->slurp);
+  }
   $pmx->{sh_theme} = $sh_theme;
 };
 
