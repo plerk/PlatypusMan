@@ -146,7 +146,7 @@ sub recurse
     
     if($first->{height})
     {
-      push @styles, "height: " . $first->{height};
+      push @styles, "height: " . $first->{height} . "em";
     }
     
     my $style = @styles > 0 ? q{style="} . join(';', @styles) . q{"} : '';
@@ -157,7 +157,7 @@ sub recurse
     }
     elsif($first->{text})
     {
-      $pmx->{content} .= qq{<pre>} . encode_entities(content($first->{text})) . qq{</pre>};
+      $pmx->{content} .= qq{<pre $style>} . encode_entities(content($first->{text})) . qq{</pre>};
     }
     elsif($first->{sh_xml})
     {
