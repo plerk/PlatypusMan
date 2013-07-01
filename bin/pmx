@@ -136,6 +136,13 @@ sub content
   }
 }
 
+sub urlify
+{
+  my $item = shift;
+  $item =~ s{(https?://\S+)}{<a href="$1">$1</a>};
+  $item;
+}
+
 sub recurse
 {
   my($first, @rest) = @_;
@@ -180,7 +187,7 @@ sub recurse
   }
   else
   {
-    $pmx->{content} .= qq{<ul><li>$first</li>\n};
+    $pmx->{content} .= qq{<ul><li>} . urlify($first) . qq{</li>\n};
     while(defined $rest[0] && (! ref $rest[0]) || (ref $rest[0] eq 'ARRAY'))
     {
       my $item = shift @rest;
@@ -190,7 +197,7 @@ sub recurse
       }
       else
       {
-        $pmx->{content} .= qq{<li>$item</li>\n};
+        $pmx->{content} .= qq{<li>} . urlify($item) . qq{</li>\n};
       }
     }
     $pmx->{content} .= qq{</ul>\n};
@@ -209,9 +216,11 @@ foreach my $slide (@{ $pmx->{slides} })
   $pmx->{content} .= qq{</div>};
 }
 
+my $out_basename = $pmx->{name} // $basename;
+
 if(defined $dir)
 {
-  $dir = dir( $dir )->subdir($basename);
+  $dir = dir( $dir )->subdir($out_basename);
 }
 elsif($test)
 {
@@ -219,13 +228,11 @@ elsif($test)
 }
 elsif(defined $ENV{PLATYPUS_MAN_OUTPUT})
 {
-  $dir = dir( $ENV{PLATYPUS_MAN_OUTPUT} )->subdir($basename);
+  $dir = dir( $ENV{PLATYPUS_MAN_OUTPUT} )->subdir($out_basename);
 }
 else
 {
-  $dir = $pmx_filename->basename;
-  $dir =~ s/\.pmx//;
-  $dir = $pmx_filename->dir->subdir($dir)->absolute;
+  $dir = $pmx_filename->dir->subdir($out_basename)->absolute;
 }
 
 $dir->mkpath(0, 0755);
