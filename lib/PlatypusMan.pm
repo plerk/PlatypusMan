@@ -18,6 +18,13 @@ use File::ShareDir qw( dist_dir );
 
 =head2 themes
 
+=head1 METHODS
+
+=head2 Platypus::Man->share_dir
+
+Returns the share directory for this dist in the form
+of a L<Path::Class::Dir> object.
+
 =cut
 
 sub share_dir
